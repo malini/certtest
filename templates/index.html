@@ -1,0 +1,65 @@
+<!doctype html>
+<head>
+  <script type="text/javascript" src="{{ js_url }}"></script>
+  <script>
+    function update_results() {
+      $.ajax({
+      url: "get_results/",
+      success: function(resp) { 
+          $("#results").html(resp);
+          if (!$("#done").is(":visible")) {
+            window.setTimeout(update_results, 1000);
+          }
+        }
+      });
+    };
+    function run_auto_tests() {
+      function kick_off() {
+        $.ajax({
+        url: "run_auto_tests/",
+        success: function(resp) { alert(resp); $("#done").show();},
+        });
+        update_results();
+      }
+
+      var phone_number = $("#phone_number").val();
+      $.ajax({
+      type: "POST",
+      url: "set/phone_number/" + phone_number,
+      success: function(resp) { alert("phone number set to: " + resp); kick_off();},
+      });
+    };
+    function interactive() {
+      function gotFoo(foo) {
+        alert(foo);
+        $.ajax({
+        type: "POST",
+        url: "run_test/test_foo_2",
+        data: {"test_data": foo},
+        success: function(resp) { alert(resp);},
+        });
+      };
+      $.ajax({
+      type: "POST",
+      url: "run_test/test_foo_1", // this is the test function we're calling
+      success: function(resp) { var foo = prompt("foo?"); gotFoo(foo);},
+      });
+    }
+  </script>
+</head>
+  <body>
+  <h1>Hello! Let's test marionette: {{ url }}!</h1>
+  <b>Enter the required information and hit 'Run the Tests'!</b>
+  <br/>
+  <br/>
+  Phone number: <input type="text" id="phone_number"/>
+  <br/>
+  <br/>
+  <button onclick="run_auto_tests()">Run the Tests!</button>
+  <br/>
+  <button id="inter" onclick="interactive()">Let's do an interactive test</button>
+  <div id="results">
+  </div>
+  </br>
+  <button id="done" style="display: none;">Done! I'll take you to the pseudo-manual test page</button>
+</body>
