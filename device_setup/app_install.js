@@ -8,7 +8,7 @@ Cu.import("resource://gre/modules/devtools/dbg-client.jsm");
 let gClient, gActor;
 let gAppId = "actor-test";
 
-let onDone =function () {
+let onDone = function () {
   installPackaged(gClient, gActor, "/data/local/app.zip", gAppId)
     .then(function ({ appId }) {
       gClient.close();
@@ -28,7 +28,7 @@ let connect = function(onDone) {
     DebuggerServer.addBrowserActors();
   }
 
-  // Setup client and actor used in all tests
+  // Setup the debugger client
   gClient = new DebuggerClient(DebuggerServer.connectPipe());
   gClient.connect(function onConnect() {
     gClient.listTabs(function onListTabs(aResponse) {
